@@ -1,0 +1,33 @@
+import pandas as pd
+
+# Read the CSV file
+data = pd.read_csv('/kaggle/input/participant/p20.csv', sep=';', encoding='utf-8')
+
+# Clean column names
+data.columns = data.columns.str.strip().str.lower()
+
+# Initialize variables
+previous_label = None
+results = []
+
+# Iterate over the rows
+for _, row in data.iterrows():
+    current_label = row['actor label']
+
+    if not pd.isna(current_label) and current_label != previous_label:
+        if previous_label is not None:
+            results.append({'actor label': previous_label})
+        previous_label = current_label
+
+# Add the last group to the results
+if previous_label is not None:
+    results.append({'actor label': previous_label})
+
+# Create a DataFrame from the results
+summary_df = pd.DataFrame(results)
+
+# Output the summary DataFrame
+print(summary_df)
+
+# Save the summary DataFrame to a new CSV file
+summary_df.to_csv('result.csv', header=True, index=False)
